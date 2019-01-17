@@ -1,0 +1,15 @@
+A:\Visual Studio Projects\TatarDeclension\TatarDeclension\bin\Debug\TatarDeclension.exe.config
+A:\Visual Studio Projects\TatarDeclension\TatarDeclension\bin\Debug\TatarDeclension.exe
+A:\Visual Studio Projects\TatarDeclension\TatarDeclension\bin\Debug\TatarDeclension.pdb
+A:\Visual Studio Projects\TatarDeclension\TatarDeclension\obj\Debug\TatarDeclension.csprojAssemblyReference.cache
+A:\Visual Studio Projects\TatarDeclension\TatarDeclension\obj\Debug\MainWindow.g.cs
+A:\Visual Studio Projects\TatarDeclension\TatarDeclension\obj\Debug\App.g.cs
+A:\Visual Studio Projects\TatarDeclension\TatarDeclension\obj\Debug\TatarDeclension_MarkupCompile.cache
+A:\Visual Studio Projects\TatarDeclension\TatarDeclension\obj\Debug\TatarDeclension_MarkupCompile.lref
+A:\Visual Studio Projects\TatarDeclension\TatarDeclension\obj\Debug\MainWindow.baml
+A:\Visual Studio Projects\TatarDeclension\TatarDeclension\obj\Debug\TatarDeclension.g.resources
+A:\Visual Studio Projects\TatarDeclension\TatarDeclension\obj\Debug\TatarDeclension.Properties.Resources.resources
+A:\Visual Studio Projects\TatarDeclension\TatarDeclension\obj\Debug\TatarDeclension.csproj.GenerateResource.cache
+A:\Visual Studio Projects\TatarDeclension\TatarDeclension\obj\Debug\TatarDeclension.csproj.CoreCompileInputs.cache
+A:\Visual Studio Projects\TatarDeclension\TatarDeclension\obj\Debug\TatarDeclension.exe
+A:\Visual Studio Projects\TatarDeclension\TatarDeclension\obj\Debug\TatarDeclension.pdb
