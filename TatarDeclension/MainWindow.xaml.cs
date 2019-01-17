@@ -22,13 +22,13 @@ namespace TatarDeclension
     public partial class MainWindow : Window
     {
         private char _lastLetter;
-        private char[] _voicelessedConsonants = { 'п', 'т', 'к', 'ф', 'ч', 'ш', 'щ', 'с', 'х', 'һ', 'ц', 'ъ', 'ь' };
+        private char[] _voicelessedConsonants = {'п', 'т', 'к', 'ф', 'ч', 'ш', 'щ', 'с', 'х', 'һ', 'ц', 'ъ', 'ь'};
+
         private readonly char[] _allConsonants =
         {
             'б', 'в', 'г', 'д', 'ж', 'җ', 'з', 'л', 'м', 'н', 'ң', 'р', 'й', 'п', 'т', 'к', 'ф', 'ч', 'ш', 'щ', 'с',
             'х', 'һ', 'ц', 'ъ', 'ь'
         };
-
 
         private readonly char[] _vowels = {'ә', 'ө', 'э', 'а', 'о', 'ы', 'е', 'ё', 'я'};
 
@@ -45,13 +45,15 @@ namespace TatarDeclension
         private const char FifthException = 'ь';
         private const char SixthException = 'ю';
         private const char SeventhException = 'у';
-        private readonly char[] _softVowels = {'ә', 'ө', 'и', 'ү', 'э'};
-        private readonly char[] _hardVowels = {'а', 'о', 'у', 'ы'};
+        private readonly char[] _softVowels = {'ә', 'ө', 'и', 'ү', 'э', 'е', 'я'};
+        private readonly char[] _hardVowels = {'а', 'о', 'у', 'ы', 'ю'};
         private string _word;
         private string[] _affiliatedForms;
         private readonly char[] _lastException = {'м', 'н', 'ң'};
+
         private readonly char[] _sonorantedConsonants =
             {'б', 'в', 'г', 'д', 'ж', 'җ', 'з', 'л', 'м', 'н', 'ң', 'р', 'й'};
+
         private readonly char[] _allVowels = {'ә', 'ө', 'и', 'ү', 'э', 'а', 'о', 'у', 'ы', 'ю'};
 
         public MainWindow()
@@ -91,33 +93,17 @@ namespace TatarDeclension
             if (_vowels.Contains(lastLetter))
             {
                 affiliatedForms[0] = _word + 'м';
-
+                affiliatedForms[2] = _word + 'ң';
                 if (_hardVowels.Contains(lastLetter))
                 {
                     affiliatedForms[1] = _word + "быз";
-                }
-                else
-                {
-                    affiliatedForms[1] = _word + "без";
-                }
-
-                affiliatedForms[2] = _word + 'ң';
-
-                if (_hardVowels.Contains(lastLetter))
-                {
                     affiliatedForms[3] = _word + "гыз";
-                }
-                else
-                {
-                    affiliatedForms[3] = _word + "гез";
-                }
-
-                if (_hardVowels.Contains(lastLetter))
-                {
                     affiliatedForms[4] = affiliatedForms[5] = _word + "сы";
                 }
                 else
                 {
+                    affiliatedForms[1] = _word + "без";
+                    affiliatedForms[3] = _word + "гез";
                     affiliatedForms[4] = affiliatedForms[5] = _word + "се";
                 }
 
@@ -126,47 +112,14 @@ namespace TatarDeclension
 
             if (_consonants.Contains(lastLetter))
             {
-                //надо дойти до последней гласной
-                var buffer = "";
-                while (!_hardVowels.Contains(_word.Last()) && !_softVowels.Contains(_word.Last()))
-                {
-                    buffer += _word.Last();
-                    _word = _word.Remove(_word.Length - 1);
-                }
-
-                lastLetter = _word.Last();
-                buffer.Reverse();
-                _word += buffer;
-
+                lastLetter = GetLastVowel();
                 if (_hardVowels.Contains(lastLetter))
                 {
-                    affiliatedForms[0] = _word + "ым";
-                    affiliatedForms[1] = _word + "ыбыз";
+                    AffiliateHard(affiliatedForms);
                 }
                 else
                 {
-                    affiliatedForms[0] = _word + "ем";
-                    affiliatedForms[1] = _word + "ебез";
-                }
-
-                if (_hardVowels.Contains(lastLetter))
-                {
-                    affiliatedForms[2] = _word + "ың";
-                    affiliatedForms[3] = _word + "ыгыз";
-                }
-                else
-                {
-                    affiliatedForms[2] = _word + "ең";
-                    affiliatedForms[3] = _word + "егез";
-                }
-
-                if (_hardVowels.Contains(lastLetter))
-                {
-                    affiliatedForms[4] = affiliatedForms[5] = _word + 'ы';
-                }
-                else
-                {
-                    affiliatedForms[4] = affiliatedForms[5] = _word + 'е';
+                    AffiliateSoft(affiliatedForms);
                 }
 
                 return affiliatedForms;
@@ -177,226 +130,51 @@ namespace TatarDeclension
                 case FirstException:
                 {
                     //замена п на б
-                    _word = _word.Remove(_word.Length - 1);
-                    _word += 'б';
-
-                    //надо дойти до последней гласной
-                    var buffer = "";
-                    while (!_hardVowels.Contains(_word.Last()) && !_softVowels.Contains(_word.Last()))
-                    {
-                        buffer += _word.Last();
-                        _word = _word.Remove(_word.Length - 1);
-                    }
-
-                    lastLetter = _word.Last();
-                    buffer.Reverse();
-                    _word += buffer;
-
-                    if (_hardVowels.Contains(lastLetter))
-                    {
-                        affiliatedForms[0] = _word + "ым";
-                        affiliatedForms[1] = _word + "ыбыз";
-                    }
-                    else
-                    {
-                        affiliatedForms[0] = _word + "ем";
-                        affiliatedForms[1] = _word + "ебез";
-                    }
-
-                    if (_hardVowels.Contains(lastLetter))
-                    {
-                        affiliatedForms[2] = _word + "ың";
-                        affiliatedForms[3] = _word + "ыгыз";
-                    }
-                    else
-                    {
-                        affiliatedForms[2] = _word + "ең";
-                        affiliatedForms[3] = _word + "егез";
-                    }
-
-                    if (_hardVowels.Contains(lastLetter))
-                    {
-                        affiliatedForms[4] = affiliatedForms[5] = _word + 'ы';
-                    }
-                    else
-                    {
-                        affiliatedForms[4] = affiliatedForms[5] = _word + 'е';
-                    }
-
-                    return affiliatedForms;
+                    return AffiliateException('б', affiliatedForms);
                 }
                 case SecondException:
                 {
                     //замена к на г
-                    _word = _word.Remove(_word.Length - 1);
-                    _word += 'г';
-
-                    //надо дойти до последней гласной
-                    var buffer = "";
-                    while (!_hardVowels.Contains(_word.Last()) && !_softVowels.Contains(_word.Last()))
-                    {
-                        buffer += _word.Last();
-                        _word = _word.Remove(_word.Length - 1);
-                    }
-
-                    lastLetter = _word.Last();
-                    buffer.Reverse();
-                    _word += buffer;
-
-                    if (_hardVowels.Contains(lastLetter))
-                    {
-                        affiliatedForms[0] = _word + "ым";
-                        affiliatedForms[1] = _word + "ыбыз";
-                    }
-                    else
-                    {
-                        affiliatedForms[0] = _word + "ем";
-                        affiliatedForms[1] = _word + "ебез";
-                    }
-
-                    if (_hardVowels.Contains(lastLetter))
-                    {
-                        affiliatedForms[2] = _word + "ың";
-                        affiliatedForms[3] = _word + "ыгыз";
-                    }
-                    else
-                    {
-                        affiliatedForms[2] = _word + "ең";
-                        affiliatedForms[3] = _word + "егез";
-                    }
-
-                    if (_hardVowels.Contains(lastLetter))
-                    {
-                        affiliatedForms[4] = affiliatedForms[5] = _word + 'ы';
-                    }
-                    else
-                    {
-                        affiliatedForms[4] = affiliatedForms[5] = _word + 'е';
-                    }
-
-                    return affiliatedForms;
+                    return AffiliateException('г', affiliatedForms);
                 }
                 case ThirdException:
                 {
                     //замена й на е
                     _word = _word.Remove(_word.Length - 1);
                     _word += 'е';
-
-                    //надо дойти до последней гласной
-                    var buffer = "";
-                    while (!_hardVowels.Contains(_word.Last()) && !_softVowels.Contains(_word.Last()))
-                    {
-                        buffer += _word.Last();
-                        _word = _word.Remove(_word.Length - 1);
-                    }
-
-                    lastLetter = _word.Last();
-                    buffer.Reverse();
-                    _word += buffer;
-
+                    lastLetter = GetLastVowel();
                     affiliatedForms[0] = _word + 'м';
-
+                    affiliatedForms[2] = _word + 'ң';
                     if (_hardVowels.Contains(lastLetter))
                     {
                         affiliatedForms[1] = _word + "быз";
-                    }
-                    else
-                    {
-                        affiliatedForms[1] = _word + "без";
-                    }
-
-                    affiliatedForms[2] = _word + 'ң';
-
-                    if (_hardVowels.Contains(lastLetter))
-                    {
                         affiliatedForms[3] = _word + "гыз";
                     }
                     else
                     {
+                        affiliatedForms[1] = _word + "без";
                         affiliatedForms[3] = _word + "гез";
+
                     }
 
                     affiliatedForms[4] = affiliatedForms[5] = _word;
-
                     return affiliatedForms;
                 }
                 case FourthException:
                 {
-                    affiliatedForms[0] = _word + "ем";
-                    affiliatedForms[1] = _word + "ебез";
-                    affiliatedForms[2] = _word + "ең";
-                    affiliatedForms[3] = _word + "егез";
-
-                    if (_people.Contains(_word))
-                    {
-                        affiliatedForms[4] = affiliatedForms[5] = _word + "се";
-                    }
-                    else
-                    {
-                        affiliatedForms[4] = affiliatedForms[5] = _word + 'е';
-                    }
-
+                    AffiliateSoft(affiliatedForms);
                     return affiliatedForms;
                 }
                 case FifthException:
                 {
                     //удаление ь
                     _word = _word.Remove(_word.Length - 1);
-
-                    affiliatedForms[0] = _word + "ем";
-                    affiliatedForms[1] = _word + "ебез";
-                    affiliatedForms[2] = _word + "ең";
-                    affiliatedForms[3] = _word + "егез";
-                    affiliatedForms[4] = affiliatedForms[5] = _word + 'е';
-
+                    AffiliateSoft(affiliatedForms);
                     return affiliatedForms;
                 }
                 case SixthException:
                 {
-                    //надо дойти до последней гласной
-                    var buffer = "";
-                    while (!_hardVowels.Contains(_word.Last()) && !_softVowels.Contains(_word.Last()))
-                    {
-                        buffer += _word.Last();
-                        _word = _word.Remove(_word.Length - 1);
-                    }
-
-                    lastLetter = _word.Last();
-                    buffer.Reverse();
-                    _word += buffer;
-
-                    if (_hardVowels.Contains(lastLetter))
-                    {
-                        affiliatedForms[0] = _word + "ым";
-                        affiliatedForms[1] = _word + "ыбыз";
-                    }
-                    else
-                    {
-                        affiliatedForms[0] = _word + "ем";
-                        affiliatedForms[1] = _word + "ебез";
-                    }
-
-                    if (_hardVowels.Contains(lastLetter))
-                    {
-                        affiliatedForms[2] = _word + "ың";
-                        affiliatedForms[3] = _word + "ыгыз";
-                    }
-                    else
-                    {
-                        affiliatedForms[2] = _word + "ең";
-                        affiliatedForms[3] = _word + "егез";
-                    }
-
-                    if (_hardVowels.Contains(lastLetter))
-                    {
-                        affiliatedForms[4] = affiliatedForms[5] = _word + 'ы';
-                    }
-                    else
-                    {
-                        affiliatedForms[4] = affiliatedForms[5] = _word + 'е';
-                    }
-
-                    return affiliatedForms;
+                    return AffiliateException(' ', affiliatedForms);
                 }
                 case SeventhException:
                 {
@@ -407,12 +185,7 @@ namespace TatarDeclension
                         _word += 'в';
                     }
 
-                    affiliatedForms[0] = _word + "ым";
-                    affiliatedForms[1] = _word + "ыбыз";
-                    affiliatedForms[2] = _word + "ың";
-                    affiliatedForms[3] = _word + "ыгыз";
-                    affiliatedForms[4] = affiliatedForms[5] = _word + 'ы';
-
+                    AffiliateHard(affiliatedForms);
                     return affiliatedForms;
                 }
                 default:
@@ -424,15 +197,77 @@ namespace TatarDeclension
                         _word += 'в';
                     }
 
-                    affiliatedForms[0] = _word + "ем";
-                    affiliatedForms[1] = _word + "ебез";
-                    affiliatedForms[2] = _word + "ең";
-                    affiliatedForms[3] = _word + "егез";
-                    affiliatedForms[4] = affiliatedForms[5] = _word + 'е';
-
+                    AffiliateSoft(affiliatedForms);
                     return affiliatedForms;
                 }
             }
+        }
+
+        private char GetLastVowel()
+        {
+            var buffer = "";
+            while (!_hardVowels.Contains(_word.Last()) && !_softVowels.Contains(_word.Last()))
+            {
+                buffer += _word.Last();
+                _word = _word.Remove(_word.Length - 1);
+            }
+
+            var lastVowel = _word.Last();
+            _word += Reverse(buffer);
+            return lastVowel;
+        }
+
+        private string[] AffiliateException(char consonantedLetter, string[] affiliatedForms)
+        {
+            if (consonantedLetter != ' ')
+            {
+                _word = _word.Remove(_word.Length - 1);
+                _word += consonantedLetter;
+            }
+
+            var lastLetter = GetLastVowel();
+            if (_hardVowels.Contains(lastLetter))
+            {
+                AffiliateHard(affiliatedForms);
+            }
+            else
+            {
+                AffiliateSoft(affiliatedForms);
+            }
+
+            return affiliatedForms;
+        }
+
+        private void AffiliateHard(IList<string> affiliatedForms)
+        {
+            affiliatedForms[0] = _word + "ым";
+            affiliatedForms[1] = _word + "ыбыз";
+            affiliatedForms[2] = _word + "ың";
+            affiliatedForms[3] = _word + "ыгыз";
+            affiliatedForms[4] = affiliatedForms[5] = _word + 'ы';
+        }
+
+        private void AffiliateSoft(IList<string> affiliatedForms)
+        {
+            affiliatedForms[0] = _word + "ем";
+            affiliatedForms[1] = _word + "ебез";
+            affiliatedForms[2] = _word + "ең";
+            affiliatedForms[3] = _word + "егез";
+            if (_people.Contains(_word))
+            {
+                affiliatedForms[4] = affiliatedForms[5] = _word + "се";
+            }
+            else
+            {
+                affiliatedForms[4] = affiliatedForms[5] = _word + 'е';
+            }
+        }
+
+        public string Reverse(string s)
+        {
+            var charArray = s.ToCharArray();
+            Array.Reverse(charArray);
+            return new string(charArray);
         }
 
         private void VowelHarmonyDeclension()
@@ -440,377 +275,229 @@ namespace TatarDeclension
             var rows = new List<Row>(28);
             rows.Add(new Row {Case = "Первое лицо"});
             BaseFill(rows, _affiliatedForms[0], _affiliatedForms[1]);
-            rows.Add(new Row { Case = "Второе лицо" });
+            rows.Add(new Row {Case = "Второе лицо"});
             BaseFill(rows, _affiliatedForms[2], _affiliatedForms[3]);
-            rows.Add(new Row { Case = "Третье лицо" });
+            rows.Add(new Row {Case = "Третье лицо"});
             BaseFill(rows, _affiliatedForms[4], _affiliatedForms[5]);
-            rows.Add(new Row { Case = "Основа + аффикс падежа" });
+            rows.Add(new Row {Case = "Основа + аффикс падежа"});
             _word = Input.Text;
             BaseFill(rows, _word, "");
-
             PossessiveCaseDeclension(rows);
             DativeCaseDeclension(rows);
             AccusativeCaseDeclension(rows);
             AblativeCaseDeclension(rows);
             LocativeCaseDeclension(rows);
-
             Table.ItemsSource = rows;
         }
 
         private static void BaseFill(ICollection<Row> rows, string singular, string plural)
         {
-            rows.Add(new Row { Case = "Баш килеш", Singular = singular, Plural = plural });
-            rows.Add(new Row { Case = "Иялек килеше", Singular = singular, Plural = plural });
-            rows.Add(new Row { Case = "Юнәлеш килеше", Singular = singular, Plural = plural });
-            rows.Add(new Row { Case = "Төшем килеше", Singular = singular, Plural = plural });
-            rows.Add(new Row { Case = "Чыгыш килеше", Singular = singular, Plural = plural });
-            rows.Add(new Row { Case = "Урын-вакыт килеше", Singular = singular, Plural = plural });
+            rows.Add(new Row {Case = "Баш килеш", Singular = singular, Plural = plural});
+            rows.Add(new Row {Case = "Иялек килеше", Singular = singular, Plural = plural});
+            rows.Add(new Row {Case = "Юнәлеш килеше", Singular = singular, Plural = plural});
+            rows.Add(new Row {Case = "Төшем килеше", Singular = singular, Plural = plural});
+            rows.Add(new Row {Case = "Чыгыш килеше", Singular = singular, Plural = plural});
+            rows.Add(new Row {Case = "Урын-вакыт килеше", Singular = singular, Plural = plural});
         }
 
         private void PossessiveCaseDeclension(IReadOnlyList<Row> rows)
         {
-            //единственное число, первое и второе лица
-            var lastLetter = ' ';
-            _word = rows[2].Singular;
-            //надо дойти до последней гласной
-            while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-            {
-                lastLetter = _word.Last();
-                _word = _word.Remove(_word.Length - 1);
-            }
+            int[] indices = {2, 9, 16, 23};
+            string[] affixes = {"ның", "нең", "ның", "нең"};
+            GeneralisationForPossessiveAndAccusativeCases(rows, indices, affixes);
+        }
 
+        private void GeneralisationForPossessiveAndAccusativeCases(IReadOnlyList<Row> rows, IReadOnlyList<int> indices, IReadOnlyList<string> affixes)
+        {
+            //единственное число, первое и второе лица
+            _word = rows[indices[0]].Singular;
+            var lastLetter = GetLastVowel();
             if (_hardVowels.Contains(lastLetter))
             {
-                rows[2].Singular += "ның";
-                rows[9].Singular += "ның";
+                rows[indices[0]].Singular += affixes[0];
+                rows[indices[1]].Singular += affixes[0];
             }
             else
             {
-                rows[2].Singular += "нең";
-                rows[9].Singular += "нең";
+                rows[indices[0]].Singular += affixes[1];
+                rows[indices[1]].Singular += affixes[1];
             }
 
             //множественное число, первое и второе лица
-            lastLetter = ' ';
-            _word = rows[2].Plural;
-            //надо дойти до последней гласной
-            while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-            {
-                lastLetter = _word.Last();
-                _word = _word.Remove(_word.Length - 1);
-            }
-
+            _word = rows[indices[0]].Plural;
+            lastLetter = GetLastVowel();
             if (_hardVowels.Contains(lastLetter))
             {
-                rows[2].Plural += "ның";
-                rows[9].Plural += "ның";
+                rows[indices[0]].Plural += affixes[0];
+                rows[indices[1]].Plural += affixes[0];
             }
             else
             {
-                rows[2].Plural += "нең";
-                rows[9].Plural += "нең";
+                rows[indices[0]].Plural += affixes[1];
+                rows[indices[1]].Plural += affixes[1];
             }
 
             //единственное и множественное числа, третье лицо
-            lastLetter = ' ';
-            _word = rows[16].Singular;
-            //надо дойти до последней гласной
-            while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-            {
-                lastLetter = _word.Last();
-                _word = _word.Remove(_word.Length - 1);
-            }
-
+            _word = rows[indices[2]].Singular;
+            lastLetter = GetLastVowel();
             if (_hardVowels.Contains(lastLetter))
             {
-                rows[16].Singular += "ның";
-                rows[16].Plural += "ның";
+                rows[indices[2]].Singular += affixes[2];
+                rows[indices[2]].Plural += affixes[2];
             }
             else
             {
-                rows[16].Singular += "нең";
-                rows[16].Plural += "нең";
+                rows[indices[2]].Singular += affixes[3];
+                rows[indices[2]].Plural += affixes[3];
             }
 
             //основа + аффикс падежа
-            lastLetter = ' ';
             _word = Input.Text;
-            //надо дойти до последней гласной
-            while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-            {
-                lastLetter = _word.Last();
-                _word = _word.Remove(_word.Length - 1);
-            }
+            lastLetter = GetLastVowel();
 
             if (_hardVowels.Contains(lastLetter))
             {
-                rows[23].Singular += "ның";
+                rows[indices[3]].Singular += affixes[0];
             }
             else
             {
-                rows[23].Singular += "нең";
+                rows[indices[3]].Singular += affixes[1];
             }
         }
 
         private void DativeCaseDeclension(IReadOnlyList<Row> rows)
         {
+            int[] indices = {3, 10, 17, 24};
+            string[] affixes = { "а" , "ә", "га", "гә", "на", "нә", "ка", "кә", "ка", "кә", "на", "нә", "га", "гә", "ка", "кә" };
+            GeneralisationForDativeAndLocativeCases(rows, indices, affixes);
+        }
+
+        private void GeneralisationForDativeAndLocativeCases(IReadOnlyList<Row> rows, IReadOnlyList<int> indices, IReadOnlyList<string> affixes)
+        {
             //единственное число, первое и второе лица
-            _word = rows[3].Singular;
+            _word = rows[indices[0]].Singular;
             var lastLetter = _word.Last();
             if (_sonorantedConsonants.Contains(lastLetter) || _allVowels.Contains(lastLetter))
             {
-                //надо дойти до последней гласной
-                while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-                {
-                    lastLetter = _word.Last();
-                    _word = _word.Remove(_word.Length - 1);
-                }
-
+                lastLetter = GetLastVowel();
                 if (_hardVowels.Contains(lastLetter))
                 {
-                    rows[3].Singular += "а";
-                    rows[10].Singular += "а";
+                    rows[indices[0]].Singular += affixes[0];
+                    rows[indices[1]].Singular += affixes[0];
                 }
                 else
                 {
-                    rows[3].Singular += "ә";
-                    rows[10].Singular += "ә";
+                    rows[indices[0]].Singular += affixes[1];
+                    rows[indices[1]].Singular += affixes[1];
                 }
 
                 //множественное число, первое и второе лица
-                lastLetter = ' ';
-                _word = rows[3].Plural;
-                //надо дойти до последней гласной
-                while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-                {
-                    lastLetter = _word.Last();
-                    _word = _word.Remove(_word.Length - 1);
-                }
-
+                _word = rows[indices[0]].Plural;
+                lastLetter = GetLastVowel();
                 if (_hardVowels.Contains(lastLetter))
                 {
-                    rows[3].Plural += "га";
-                    rows[10].Plural += "га";
+                    rows[indices[0]].Plural += affixes[2];
+                    rows[indices[1]].Plural += affixes[2];
                 }
                 else
                 {
-                    rows[3].Plural += "гә";
-                    rows[10].Plural += "гә";
+                    rows[indices[0]].Plural += affixes[3];
+                    rows[indices[1]].Plural += affixes[3];
                 }
 
                 //единственное и множественное числа, третье лицо
-                lastLetter = ' ';
-                _word = rows[17].Singular;
-                //надо дойти до последней гласной
-                while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-                {
-                    lastLetter = _word.Last();
-                    _word = _word.Remove(_word.Length - 1);
-                }
-
+                _word = rows[indices[2]].Singular;
+                lastLetter = GetLastVowel();
                 if (_hardVowels.Contains(lastLetter))
                 {
-                    rows[17].Singular += "на";
-                    rows[17].Plural += "на";
+                    rows[indices[2]].Singular += affixes[4];
+                    rows[indices[2]].Plural += affixes[4];
                 }
                 else
                 {
-                    rows[17].Singular += "нә";
-                    rows[17].Plural += "нә";
+                    rows[indices[2]].Singular += affixes[5];
+                    rows[indices[2]].Plural += affixes[5];
                 }
             }
             else
             {
-                //надо дойти до последней гласной
-                while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-                {
-                    lastLetter = _word.Last();
-                    _word = _word.Remove(_word.Length - 1);
-                }
-
+                lastLetter = GetLastVowel();
                 if (_hardVowels.Contains(lastLetter))
                 {
-                    rows[3].Singular += "ка";
-                    rows[10].Singular += "ка";
+                    rows[indices[0]].Singular += affixes[6];
+                    rows[indices[1]].Singular += affixes[6];
                 }
                 else
                 {
-                    rows[3].Singular += "кә";
-                    rows[10].Singular += "кә";
+                    rows[indices[0]].Singular += affixes[7];
+                    rows[indices[1]].Singular += affixes[7];
                 }
 
                 //множественное число, первое и второе лица
-                lastLetter = ' ';
-                _word = rows[3].Plural;
-                //надо дойти до последней гласной
-                while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-                {
-                    lastLetter = _word.Last();
-                    _word = _word.Remove(_word.Length - 1);
-                }
-
+                _word = rows[indices[0]].Plural;
+                lastLetter = GetLastVowel();
                 if (_hardVowels.Contains(lastLetter))
                 {
-                    rows[3].Plural += "ка";
-                    rows[10].Plural += "ка";
+                    rows[indices[0]].Plural += affixes[8];
+                    rows[indices[1]].Plural += affixes[8];
                 }
                 else
                 {
-                    rows[3].Plural += "кә";
-                    rows[10].Plural += "кә";
+                    rows[indices[0]].Plural += affixes[9];
+                    rows[indices[1]].Plural += affixes[9];
                 }
 
                 //единственное и множественное числа, третье лицо
-                lastLetter = ' ';
-                _word = rows[17].Singular;
-                //надо дойти до последней гласной
-                while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-                {
-                    lastLetter = _word.Last();
-                    _word = _word.Remove(_word.Length - 1);
-                }
-
+                _word = rows[indices[2]].Singular;
+                lastLetter = GetLastVowel();
                 if (_hardVowels.Contains(lastLetter))
                 {
-                    rows[17].Singular += "на";
-                    rows[17].Plural += "на";
+                    rows[indices[2]].Singular += affixes[10];
+                    rows[indices[2]].Plural += affixes[10];
                 }
                 else
                 {
-                    rows[17].Singular += "нә";
-                    rows[17].Plural += "нә";
+                    rows[indices[2]].Singular += affixes[11];
+                    rows[indices[2]].Plural += affixes[11];
                 }
             }
 
-            _word = rows[24].Singular;
+            _word = rows[indices[3]].Singular;
             lastLetter = _word.Last();
             //основа + аффикс падежа
             if (_sonorantedConsonants.Contains(lastLetter) || _allVowels.Contains(lastLetter))
             {
-                
-                lastLetter = ' ';
                 _word = Input.Text;
-                //надо дойти до последней гласной
-                while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-                {
-                    lastLetter = _word.Last();
-                    _word = _word.Remove(_word.Length - 1);
-                }
-
+                lastLetter = GetLastVowel();
                 if (_hardVowels.Contains(lastLetter))
                 {
-                    rows[24].Singular += "га";
+                    rows[indices[3]].Singular += affixes[12];
                 }
                 else
                 {
-                    rows[24].Singular += "гә";
+                    rows[indices[3]].Singular += affixes[13];
                 }
             }
             else
             {
-                lastLetter = ' ';
                 _word = Input.Text;
-                //надо дойти до последней гласной
-                while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-                {
-                    lastLetter = _word.Last();
-                    _word = _word.Remove(_word.Length - 1);
-                }
-
+                lastLetter = GetLastVowel();
                 if (_hardVowels.Contains(lastLetter))
                 {
-                    rows[24].Singular += "ка";
+                    rows[indices[3]].Singular += affixes[14];
                 }
                 else
                 {
-                    rows[24].Singular += "кә";
+                    rows[indices[3]].Singular += affixes[15];
                 }
             }
         }
-
+        
         private void AccusativeCaseDeclension(IReadOnlyList<Row> rows)
         {
-            //единственное число, первое и второе лица
-            var lastLetter = ' ';
-            _word = rows[4].Singular;
-            //надо дойти до последней гласной
-            while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-            {
-                lastLetter = _word.Last();
-                _word = _word.Remove(_word.Length - 1);
-            }
-
-            if (_hardVowels.Contains(lastLetter))
-            {
-                rows[4].Singular += "ны";
-                rows[11].Singular += "ны";
-            }
-            else
-            {
-                rows[4].Singular += "не";
-                rows[11].Singular += "не";
-            }
-
-            //множественное число, первое и второе лица
-            lastLetter = ' ';
-            _word = rows[4].Plural;
-            //надо дойти до последней гласной
-            while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-            {
-                lastLetter = _word.Last();
-                _word = _word.Remove(_word.Length - 1);
-            }
-
-            if (_hardVowels.Contains(lastLetter))
-            {
-                rows[4].Plural += "ны";
-                rows[11].Plural += "ны";
-            }
-            else
-            {
-                rows[4].Plural += "не";
-                rows[11].Plural += "не";
-            }
-
-            //единственное и множественное числа, третье лицо
-            lastLetter = ' ';
-            _word = rows[18].Singular;
-            //надо дойти до последней гласной
-            while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-            {
-                lastLetter = _word.Last();
-                _word = _word.Remove(_word.Length - 1);
-            }
-
-            if (_hardVowels.Contains(lastLetter))
-            {
-                rows[18].Singular += "н";
-                rows[18].Plural += "н";
-            }
-            else
-            {
-                rows[18].Singular += "н";
-                rows[18].Plural += "н";
-            }
-
-            //основа + аффикс падежа
-            lastLetter = ' ';
-            _word = Input.Text;
-            //надо дойти до последней гласной
-            while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-            {
-                lastLetter = _word.Last();
-                _word = _word.Remove(_word.Length - 1);
-            }
-
-            if (_hardVowels.Contains(lastLetter))
-            {
-                rows[25].Singular += "ны";
-            }
-            else
-            {
-                rows[25].Singular += "не";
-            }
+            int[] indices = { 4, 11, 18, 25 };
+            string[] affixes = { "ны", "не", "н", "н" };
+            GeneralisationForPossessiveAndAccusativeCases(rows, indices, affixes);
         }
 
         private void AblativeCaseDeclension(IReadOnlyList<Row> rows)
@@ -820,13 +507,7 @@ namespace TatarDeclension
             var lastLetter = _word.Last();
             if (_lastException.Contains(lastLetter))
             {
-                //надо дойти до последней гласной
-                while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-                {
-                    lastLetter = _word.Last();
-                    _word = _word.Remove(_word.Length - 1);
-                }
-
+                lastLetter = GetLastVowel();
                 if (_hardVowels.Contains(lastLetter))
                 {
                     rows[5].Singular += "нан";
@@ -839,15 +520,8 @@ namespace TatarDeclension
                 }
 
                 //множественное число, первое и второе лица
-                lastLetter = ' ';
                 _word = rows[5].Plural;
-                //надо дойти до последней гласной
-                while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-                {
-                    lastLetter = _word.Last();
-                    _word = _word.Remove(_word.Length - 1);
-                }
-
+                lastLetter = GetLastVowel();
                 if (_hardVowels.Contains(lastLetter))
                 {
                     rows[5].Plural += "дан";
@@ -860,15 +534,8 @@ namespace TatarDeclension
                 }
 
                 //единственное и множественное числа, третье лицо
-                lastLetter = ' ';
                 _word = rows[19].Singular;
-                //надо дойти до последней гласной
-                while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-                {
-                    lastLetter = _word.Last();
-                    _word = _word.Remove(_word.Length - 1);
-                }
-
+                lastLetter = GetLastVowel();
                 if (_hardVowels.Contains(lastLetter))
                 {
                     rows[19].Singular += "ннан";
@@ -882,13 +549,7 @@ namespace TatarDeclension
             }
             else if (_sonorantedConsonants.Contains(lastLetter) || _allVowels.Contains(lastLetter))
             {
-                //надо дойти до последней гласной
-                while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-                {
-                    lastLetter = _word.Last();
-                    _word = _word.Remove(_word.Length - 1);
-                }
-
+                lastLetter = GetLastVowel();
                 if (_hardVowels.Contains(lastLetter))
                 {
                     rows[5].Singular += "дан";
@@ -901,15 +562,8 @@ namespace TatarDeclension
                 }
 
                 //множественное число, первое и второе лица
-                lastLetter = ' ';
                 _word = rows[5].Plural;
-                //надо дойти до последней гласной
-                while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-                {
-                    lastLetter = _word.Last();
-                    _word = _word.Remove(_word.Length - 1);
-                }
-
+                lastLetter = GetLastVowel();
                 if (_hardVowels.Contains(lastLetter))
                 {
                     rows[5].Plural += "дан";
@@ -922,15 +576,8 @@ namespace TatarDeclension
                 }
 
                 //единственное и множественное числа, третье лицо
-                lastLetter = ' ';
                 _word = rows[19].Singular;
-                //надо дойти до последней гласной
-                while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-                {
-                    lastLetter = _word.Last();
-                    _word = _word.Remove(_word.Length - 1);
-                }
-
+                lastLetter = GetLastVowel();
                 if (_hardVowels.Contains(lastLetter))
                 {
                     rows[19].Singular += "дан";
@@ -944,13 +591,7 @@ namespace TatarDeclension
             }
             else
             {
-                //надо дойти до последней гласной
-                while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-                {
-                    lastLetter = _word.Last();
-                    _word = _word.Remove(_word.Length - 1);
-                }
-
+                lastLetter = GetLastVowel();
                 if (_hardVowels.Contains(lastLetter))
                 {
                     rows[5].Singular += "тан";
@@ -963,15 +604,8 @@ namespace TatarDeclension
                 }
 
                 //множественное число, первое и второе лица
-                lastLetter = ' ';
                 _word = rows[5].Plural;
-                //надо дойти до последней гласной
-                while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-                {
-                    lastLetter = _word.Last();
-                    _word = _word.Remove(_word.Length - 1);
-                }
-
+                lastLetter = GetLastVowel();
                 if (_hardVowels.Contains(lastLetter))
                 {
                     rows[5].Plural += "тан";
@@ -984,15 +618,8 @@ namespace TatarDeclension
                 }
 
                 //единственное и множественное числа, третье лицо
-                lastLetter = ' ';
                 _word = rows[19].Singular;
-                //надо дойти до последней гласной
-                while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-                {
-                    lastLetter = _word.Last();
-                    _word = _word.Remove(_word.Length - 1);
-                }
-
+                lastLetter = GetLastVowel();
                 if (_hardVowels.Contains(lastLetter))
                 {
                     rows[19].Singular += "тан";
@@ -1010,15 +637,8 @@ namespace TatarDeclension
             //основа + аффикс падежа
             if (_lastException.Contains(lastLetter))
             {
-                lastLetter = ' ';
                 _word = Input.Text;
-                //надо дойти до последней гласной
-                while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-                {
-                    lastLetter = _word.Last();
-                    _word = _word.Remove(_word.Length - 1);
-                }
-
+                lastLetter = GetLastVowel();
                 if (_hardVowels.Contains(lastLetter))
                 {
                     rows[26].Singular += "нан";
@@ -1030,16 +650,8 @@ namespace TatarDeclension
             }
             else if (_sonorantedConsonants.Contains(lastLetter) || _allVowels.Contains(lastLetter))
             {
-
-                lastLetter = ' ';
                 _word = Input.Text;
-                //надо дойти до последней гласной
-                while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-                {
-                    lastLetter = _word.Last();
-                    _word = _word.Remove(_word.Length - 1);
-                }
-
+                lastLetter = GetLastVowel();
                 if (_hardVowels.Contains(lastLetter))
                 {
                     rows[26].Singular += "дан";
@@ -1051,15 +663,8 @@ namespace TatarDeclension
             }
             else
             {
-                lastLetter = ' ';
                 _word = Input.Text;
-                //надо дойти до последней гласной
-                while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-                {
-                    lastLetter = _word.Last();
-                    _word = _word.Remove(_word.Length - 1);
-                }
-
+                lastLetter = GetLastVowel();
                 if (_hardVowels.Contains(lastLetter))
                 {
                     rows[26].Singular += "тан";
@@ -1073,179 +678,11 @@ namespace TatarDeclension
 
         private void LocativeCaseDeclension(IReadOnlyList<Row> rows)
         {
-            //единственное число, первое и второе лица
-            _word = rows[6].Singular;
-            var lastLetter = _word.Last();
-            if (_sonorantedConsonants.Contains(lastLetter) || _allVowels.Contains(lastLetter))
-            {
-                //надо дойти до последней гласной
-                while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-                {
-                    lastLetter = _word.Last();
-                    _word = _word.Remove(_word.Length - 1);
-                }
-
-                if (_hardVowels.Contains(lastLetter))
-                {
-                    rows[6].Singular += "да";
-                    rows[13].Singular += "да";
-                }
-                else
-                {
-                    rows[6].Singular += "дә";
-                    rows[13].Singular += "дә";
-                }
-
-                //множественное число, первое и второе лица
-                lastLetter = ' ';
-                _word = rows[6].Plural;
-                //надо дойти до последней гласной
-                while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-                {
-                    lastLetter = _word.Last();
-                    _word = _word.Remove(_word.Length - 1);
-                }
-
-                if (_hardVowels.Contains(lastLetter))
-                {
-                    rows[6].Plural += "да";
-                    rows[13].Plural += "да";
-                }
-                else
-                {
-                    rows[6].Plural += "дә";
-                    rows[13].Plural += "дә";
-                }
-
-                //единственное и множественное числа, третье лицо
-                lastLetter = ' ';
-                _word = rows[20].Singular;
-                //надо дойти до последней гласной
-                while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-                {
-                    lastLetter = _word.Last();
-                    _word = _word.Remove(_word.Length - 1);
-                }
-
-                if (_hardVowels.Contains(lastLetter))
-                {
-                    rows[20].Singular += "нда";
-                    rows[20].Plural += "нда";
-                }
-                else
-                {
-                    rows[20].Singular += "ндә";
-                    rows[20].Plural += "ндә";
-                }
-            }
-            else
-            {
-                //надо дойти до последней гласной
-                while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-                {
-                    lastLetter = _word.Last();
-                    _word = _word.Remove(_word.Length - 1);
-                }
-
-                if (_hardVowels.Contains(lastLetter))
-                {
-                    rows[6].Singular += "та";
-                    rows[13].Singular += "та";
-                }
-                else
-                {
-                    rows[6].Singular += "тә";
-                    rows[13].Singular += "тә";
-                }
-
-                //множественное число, первое и второе лица
-                lastLetter = ' ';
-                _word = rows[6].Plural;
-                //надо дойти до последней гласной
-                while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-                {
-                    lastLetter = _word.Last();
-                    _word = _word.Remove(_word.Length - 1);
-                }
-
-                if (_hardVowels.Contains(lastLetter))
-                {
-                    rows[6].Plural += "та";
-                    rows[13].Plural += "та";
-                }
-                else
-                {
-                    rows[6].Plural += "тә";
-                    rows[13].Plural += "тә";
-                }
-
-                //единственное и множественное числа, третье лицо
-                lastLetter = ' ';
-                _word = rows[20].Singular;
-                //надо дойти до последней гласной
-                while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-                {
-                    lastLetter = _word.Last();
-                    _word = _word.Remove(_word.Length - 1);
-                }
-
-                if (_hardVowels.Contains(lastLetter))
-                {
-                    rows[20].Singular += "та";
-                    rows[20].Plural += "та";
-                }
-                else
-                {
-                    rows[20].Singular += "тә";
-                    rows[20].Plural += "тә";
-                }
-            }
-
-            _word = rows[27].Singular;
-            lastLetter = _word.Last();
-            //основа + аффикс падежа
-            if (_sonorantedConsonants.Contains(lastLetter) || _allVowels.Contains(lastLetter))
-            {
-                lastLetter = ' ';
-                _word = Input.Text;
-                //надо дойти до последней гласной
-                while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-                {
-                    lastLetter = _word.Last();
-                    _word = _word.Remove(_word.Length - 1);
-                }
-
-                if (_hardVowels.Contains(lastLetter))
-                {
-                    rows[27].Singular += "да";
-                }
-                else
-                {
-                    rows[27].Singular += "дә";
-                }
-            }
-            else
-            {
-                lastLetter = ' ';
-                _word = Input.Text;
-                //надо дойти до последней гласной
-                while (!_hardVowels.Contains(lastLetter) && !_softVowels.Contains(lastLetter))
-                {
-                    lastLetter = _word.Last();
-                    _word = _word.Remove(_word.Length - 1);
-                }
-
-                if (_hardVowels.Contains(lastLetter))
-                {
-                    rows[27].Singular += "та";
-                }
-                else
-                {
-                    rows[27].Singular += "тә";
-                }
-            }
+            int[] indices = { 6, 13, 20, 27 };
+            string[] affixes = { "да", "дә", "да", "дә", "нда", "ндә", "та", "тә", "та", "тә", "та", "тә", "да", "дә", "та", "тә" };
+            GeneralisationForDativeAndLocativeCases(rows, indices, affixes);
         }
-        
+
         private void ArabicAndPersianDeclension()
         {
             MessageBox.Show("Что делать?");
