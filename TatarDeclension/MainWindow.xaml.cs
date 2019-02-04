@@ -1,18 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace TatarDeclension
 {
@@ -45,8 +34,9 @@ namespace TatarDeclension
         private const char FifthException = 'ь';
         private const char SixthException = 'ю';
         private const char SeventhException = 'у';
-        private readonly char[] _softVowels = {'ә', 'ө', 'и', 'ү', 'э', 'е', 'я'};
-        private readonly char[] _hardVowels = {'а', 'о', 'у', 'ы', 'ю'};
+        private readonly char[] _softVowels = {'ә', 'ө', 'и', 'ү', 'э'};
+        private readonly char[] _hardVowels = {'а', 'о', 'у', 'ы'};
+        private readonly char[] _chameleonVowels = {'е', 'я', 'ю'};
         private string _word;
         private string[] _affiliatedForms;
         private readonly char[] _lastException = {'м', 'н', 'ң'};
@@ -214,6 +204,10 @@ namespace TatarDeclension
 
             var lastVowel = _word.Last();
             _word += Reverse(buffer);
+            if (_chameleonVowels.Contains(lastVowel))
+            {
+                GetLastVowel();
+            }
             return lastVowel;
         }
 
