@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace TatarDeclension
 {
@@ -64,21 +66,28 @@ namespace TatarDeclension
                 return;
             }
 
-            //слово подчиняется закону сингармонизма
-            if (IsInVowelHarmony.IsChecked == true)
+            try
             {
-                //проверка слова на мягкость
-                _isSoft = CheckIfIsSoft();
-                //добавление аффиксов принадлежности
-                _possessedForms = PossessedForms();
-                _lastLetter = _word.Last();
-                //добавление аффиксов падежей
-                VowelHarmonyDeclension();
-                return;
-            }
+                //слово подчиняется закону сингармонизма
+                if (IsInVowelHarmony.IsChecked == true)
+                {
+                    //проверка слова на мягкость
+                    _isSoft = CheckIfIsSoft();
+                    //добавление аффиксов принадлежности
+                    _possessedForms = PossessedForms();
+                    _lastLetter = _word.Last();
+                    //добавление аффиксов падежей
+                    VowelHarmonyDeclension();
+                    return;
+                }
 
-            //слово не подчиняется закону сингармонизма
-            ArabicAndPersianDeclension();
+                //слово не подчиняется закону сингармонизма
+                ArabicAndPersianDeclension();
+            }
+            catch
+            {
+                MessageBox.Show("Вы ввели некорректное слово. Пожалуйста, исправьте ошибку.");
+            }
         }
 
         private bool CheckIfIsSoft()
@@ -88,15 +97,13 @@ namespace TatarDeclension
                 return true;
             }
 
-            var lastVowel = GetLastVowel();
-            return _softVowels.Contains(lastVowel) || _containsOnlyChameleonVowels;
+            return _softVowels.Contains(GetLastVowel()) || _containsOnlyChameleonVowels;
         }
 
         private bool CheckIfInRoundingHarmony()
         {
-            var first = false;
-            var second = false;
-            foreach (var letter in _word)
+            bool first = false, second = false;
+            foreach (char letter in _word)
             {
                 if (first && letter == 'а')
                 {
@@ -125,8 +132,8 @@ namespace TatarDeclension
 
         private char GetLastVowel()
         {
-            var vowels = new List<char>();
-            var buffer = "";
+            List<char> vowels = new List<char>();
+            string buffer = "";
             char lastVowel;
             _containsOnlyChameleonVowels = CheckIfContainsOnlyChameleonVowels(ref vowels);
             if (_containsOnlyChameleonVowels)
@@ -155,7 +162,7 @@ namespace TatarDeclension
 
         private bool CheckIfContainsOnlyChameleonVowels(ref List<char> vowels)
         {
-            foreach (var letter in _word)
+            foreach (char letter in _word)
             {
                 if (_allVowels.Contains(letter))
                 {
@@ -168,8 +175,8 @@ namespace TatarDeclension
 
         private string[] PossessedForms()
         {
-            var possessedForms = new string[6];
-            var lastLetter = _word.Last();
+            string[] possessedForms = new string[6];
+            char lastLetter = _word.Last();
             if (_vowels.Contains(lastLetter))
             {
                 possessedForms[0] = _word + 'м';
@@ -178,13 +185,15 @@ namespace TatarDeclension
                 {
                     possessedForms[1] = _word + "быз";
                     possessedForms[3] = _word + "гыз";
-                    possessedForms[4] = possessedForms[5] = _word + "сы";
+                    possessedForms[4] = _word + "сы";
+                    possessedForms[5] = _word + "лары";
                 }
                 else
                 {
                     possessedForms[1] = _word + "без";
                     possessedForms[3] = _word + "гез";
-                    possessedForms[4] = possessedForms[5] = _word + "се";
+                    possessedForms[4] = _word + "се";
+                    possessedForms[5] = _word + "ләре";
                 }
 
                 return possessedForms;
@@ -227,15 +236,16 @@ namespace TatarDeclension
                     {
                         possessedForms[1] = _word + "быз";
                         possessedForms[3] = _word + "гыз";
+                        possessedForms[5] = _word + "лары";
                     }
                     else
                     {
                         possessedForms[1] = _word + "без";
                         possessedForms[3] = _word + "гез";
-
+                        possessedForms[5] = _word + "ләре";
                     }
 
-                    possessedForms[4] = possessedForms[5] = _word;
+                    possessedForms[4] = _word;
                     return possessedForms;
                 }
                 case FourthException:
@@ -308,7 +318,8 @@ namespace TatarDeclension
             possessedForms[1] = _word + "ыбыз";
             possessedForms[2] = _word + "ың";
             possessedForms[3] = _word + "ыгыз";
-            possessedForms[4] = possessedForms[5] = _word + 'ы';
+            possessedForms[4] = _word + 'ы';
+            possessedForms[5] = _word + "лары";
         }
 
         private void PossessSoft(IList<string> possessedForms)
@@ -319,38 +330,67 @@ namespace TatarDeclension
             possessedForms[3] = _word + "егез";
             if (_people.Contains(_word))
             {
-                possessedForms[4] = possessedForms[5] = _word + "се";
+                possessedForms[4] = _word + "се";
+                possessedForms[5] = _word + "ләре";
             }
             else
             {
-                possessedForms[4] = possessedForms[5] = _word + 'е';
+                possessedForms[4] = _word + 'е';
+                possessedForms[5] = _word + "ләре";
             }
         }
 
         public string Reverse(string s)
         {
-            var charArray = s.ToCharArray();
+            char[] charArray = s.ToCharArray();
             Array.Reverse(charArray);
             return new string(charArray);
         }
 
+        private string BasePlural()
+        {
+            _lastLetter = _word[_word.Length - 1];
+            if (_lastException.Contains(_lastLetter))
+            {
+                return _isSoft ? _word + "нәр" : _word + "нар";
+            }
+
+            return _isSoft ? _word + "ләр" : _word + "лар";
+        }
+
         private void VowelHarmonyDeclension()
         {
-            var rows = new List<Row>(28);
-            rows.Add(new Row {Case = "Первое лицо"});
+            List<Row> rows = new List<Row>(28);
+            rows.Add(new Row { Singular = "Первое лицо"});
             BaseFill(rows, _possessedForms[0], _possessedForms[1]);
-            rows.Add(new Row {Case = "Второе лицо"});
+            rows.Add(new Row { Singular = "Второе лицо"});
             BaseFill(rows, _possessedForms[2], _possessedForms[3]);
-            rows.Add(new Row {Case = "Третье лицо"});
+            rows.Add(new Row { Singular = "Третье лицо"});
             BaseFill(rows, _possessedForms[4], _possessedForms[5]);
-            rows.Add(new Row {Case = "Основа + аффикс падежа"});
+            rows.Add(new Row { Singular = "Основа + аффикс падежа"});
             _word = Input.Text;
-            BaseFill(rows, _word, "");
+            BaseFill(rows, _word, BasePlural());
             PossessiveCaseDeclension(rows);
             DativeCaseDeclension(rows);
             AccusativeCaseDeclension(rows);
             AblativeCaseDeclension(rows);
             LocativeCaseDeclension(rows);
+
+            // TODO: временное решение, переносит «простое» в начало. Потом нужно сделать, чтобы сразу «простое» было в начале
+            List<T> ShiftLeft<T>(List<T> list, int shiftBy)
+            {
+                if (list.Count <= shiftBy)
+                {
+                    return list;
+                }
+
+                List<T> result = list.GetRange(shiftBy, list.Count - shiftBy);
+                result.AddRange(list.GetRange(0, shiftBy));
+                return result;
+            }
+
+            rows = ShiftLeft(rows, 21);
+
             Table.ItemsSource = rows;
         }
 
@@ -364,6 +404,7 @@ namespace TatarDeclension
             rows.Add(new Row {Case = "Урын-вакыт килеше", Singular = singular, Plural = plural});
         }
 
+        // Иялек килеше
         private void PossessiveCaseDeclension(IReadOnlyList<Row> rows)
         {
             int[] indices = {2, 9, 16, 23};
@@ -419,13 +460,16 @@ namespace TatarDeclension
             if (!_isSoft)
             {
                 rows[indices[3]].Singular += affixes[0];
+                rows[indices[3]].Plural += affixes[0];
             }
             else
             {
                 rows[indices[3]].Singular += affixes[1];
+                rows[indices[3]].Plural += affixes[1];
             }
         }
 
+        // Юнәлеш килеше
         private void DativeCaseDeclension(IReadOnlyList<Row> rows)
         {
             int[] indices = {3, 10, 17, 24};
@@ -439,7 +483,7 @@ namespace TatarDeclension
         {
             //единственное число, первое и второе лица
             _word = rows[indices[0]].Singular;
-            var lastLetter = _word.Last();
+            char lastLetter = _word.Last();
             if (_sonorantedConsonants.Contains(lastLetter) || _allVowels.Contains(lastLetter))
             {
                 if (!_isSoft)
@@ -519,12 +563,12 @@ namespace TatarDeclension
                 }
             }
 
+            // основа + аффикс падежа
+            // единственное число
             _word = rows[indices[3]].Singular;
             lastLetter = _word.Last();
-            //основа + аффикс падежа
             if (_sonorantedConsonants.Contains(lastLetter) || _allVowels.Contains(lastLetter))
             {
-                _word = Input.Text;
                 if (!_isSoft)
                 {
                     rows[indices[3]].Singular += affixes[12];
@@ -536,7 +580,6 @@ namespace TatarDeclension
             }
             else
             {
-                _word = Input.Text;
                 if (!_isSoft)
                 {
                     rows[indices[3]].Singular += affixes[14];
@@ -546,8 +589,34 @@ namespace TatarDeclension
                     rows[indices[3]].Singular += affixes[15];
                 }
             }
+            // множественное число
+            _word = rows[indices[3]].Plural;
+            lastLetter = _word.Last();
+            if (_sonorantedConsonants.Contains(lastLetter) || _allVowels.Contains(lastLetter))
+            {
+                if (!_isSoft)
+                {
+                    rows[indices[3]].Plural += affixes[12];
+                }
+                else
+                {
+                    rows[indices[3]].Plural += affixes[13];
+                }
+            }
+            else
+            {
+                if (!_isSoft)
+                {
+                    rows[indices[3]].Plural += affixes[14];
+                }
+                else
+                {
+                    rows[indices[3]].Plural += affixes[15];
+                }
+            }
         }
 
+        // Төшем килеше
         private void AccusativeCaseDeclension(IReadOnlyList<Row> rows)
         {
             int[] indices = {4, 11, 18, 25};
@@ -555,11 +624,12 @@ namespace TatarDeclension
             GeneralisationForPossessiveAndAccusativeCases(rows, indices, affixes);
         }
 
+        // Чыгыш килеше
         private void AblativeCaseDeclension(IReadOnlyList<Row> rows)
         {
             //единственное число, первое и второе лица
             _word = rows[5].Singular;
-            var lastLetter = _word.Last();
+            char lastLetter = _word.Last();
             if (_lastException.Contains(lastLetter))
             {
                 if (!_isSoft)
@@ -678,12 +748,12 @@ namespace TatarDeclension
                 }
             }
 
+            // основа + аффикс падежа
+            // единственное число
             _word = rows[26].Singular;
             lastLetter = _word.Last();
-            //основа + аффикс падежа
             if (_lastException.Contains(lastLetter))
             {
-                _word = Input.Text;
                 if (!_isSoft)
                 {
                     rows[26].Singular += "нан";
@@ -695,7 +765,6 @@ namespace TatarDeclension
             }
             else if (_sonorantedConsonants.Contains(lastLetter) || _allVowels.Contains(lastLetter))
             {
-                _word = Input.Text;
                 if (!_isSoft)
                 {
                     rows[26].Singular += "дан";
@@ -707,7 +776,6 @@ namespace TatarDeclension
             }
             else
             {
-                _word = Input.Text;
                 if (!_isSoft)
                 {
                     rows[26].Singular += "тан";
@@ -717,8 +785,45 @@ namespace TatarDeclension
                     rows[26].Singular += "тән";
                 }
             }
+            // множественное число
+            _word = rows[26].Plural;
+            lastLetter = _word.Last();
+            if (_lastException.Contains(lastLetter))
+            {
+                if (!_isSoft)
+                {
+                    rows[26].Plural += "нан";
+                }
+                else
+                {
+                    rows[26].Plural += "нән";
+                }
+            }
+            else if (_sonorantedConsonants.Contains(lastLetter) || _allVowels.Contains(lastLetter))
+            {
+                if (!_isSoft)
+                {
+                    rows[26].Plural += "дан";
+                }
+                else
+                {
+                    rows[26].Plural += "дән";
+                }
+            }
+            else
+            {
+                if (!_isSoft)
+                {
+                    rows[26].Plural += "тан";
+                }
+                else
+                {
+                    rows[26].Plural += "тән";
+                }
+            }
         }
 
+        // Урын-вакыт килеше
         private void LocativeCaseDeclension(IReadOnlyList<Row> rows)
         {
             int[] indices = {6, 13, 20, 27};
@@ -736,14 +841,14 @@ namespace TatarDeclension
                     _word += 'т';
                     _isSoft = false;
                     _possessedForms = PossessedForms();
-                    var rows = new List<Row>(28);
-                    rows.Add(new Row {Case = "Первое лицо"});
+                    List<Row> rows = new List<Row>(28);
+                    rows.Add(new Row { Singular = "Первое лицо"});
                     BaseFill(rows, _possessedForms[0], _possessedForms[1]);
-                    rows.Add(new Row {Case = "Второе лицо"});
+                    rows.Add(new Row { Singular = "Второе лицо"});
                     BaseFill(rows, _possessedForms[2], _possessedForms[3]);
-                    rows.Add(new Row {Case = "Третье лицо"});
+                    rows.Add(new Row { Singular = "Третье лицо"});
                     BaseFill(rows, _possessedForms[4], _possessedForms[5]);
-                    rows.Add(new Row {Case = "Основа + аффикс падежа"});
+                    rows.Add(new Row { Singular = "Основа + аффикс падежа"});
                     _word = Input.Text;
                     BaseFill(rows, _word, "");
                     PossessiveCaseDeclension(rows);
@@ -758,14 +863,14 @@ namespace TatarDeclension
                 {
                     _isSoft = false;
                     _possessedForms = PossessedForms();
-                    var rows = new List<Row>(28);
-                    rows.Add(new Row {Case = "Первое лицо"});
+                    List<Row> rows = new List<Row>(28);
+                    rows.Add(new Row { Singular = "Первое лицо"});
                     BaseFill(rows, _possessedForms[0], _possessedForms[1]);
-                    rows.Add(new Row {Case = "Второе лицо"});
+                    rows.Add(new Row { Singular = "Второе лицо"});
                     BaseFill(rows, _possessedForms[2], _possessedForms[3]);
-                    rows.Add(new Row {Case = "Третье лицо"});
+                    rows.Add(new Row { Singular = "Третье лицо"});
                     BaseFill(rows, _possessedForms[4], _possessedForms[5]);
-                    rows.Add(new Row {Case = "Основа + аффикс падежа"});
+                    rows.Add(new Row { Singular = "Основа + аффикс падежа"});
                     BaseFill(rows, _word, "");
                     PossessiveCaseDeclension(rows);
                     DativeCaseDeclension(rows);
@@ -779,14 +884,14 @@ namespace TatarDeclension
                 {
                     _isSoft = false;
                     _possessedForms = PossessedForms();
-                    var rows = new List<Row>(28);
-                    rows.Add(new Row {Case = "Первое лицо"});
+                    List<Row> rows = new List<Row>(28);
+                    rows.Add(new Row { Singular = "Первое лицо"});
                     BaseFill(rows, _possessedForms[0], _possessedForms[1]);
-                    rows.Add(new Row {Case = "Второе лицо"});
+                    rows.Add(new Row { Singular = "Второе лицо"});
                     BaseFill(rows, _possessedForms[2], _possessedForms[3]);
-                    rows.Add(new Row {Case = "Третье лицо"});
+                    rows.Add(new Row { Singular = "Третье лицо"});
                     BaseFill(rows, _possessedForms[4], _possessedForms[5]);
-                    rows.Add(new Row {Case = "Основа + аффикс падежа"});
+                    rows.Add(new Row { Singular = "Основа + аффикс падежа"});
                     BaseFill(rows, _word, "");
                     PossessiveCaseDeclension(rows);
                     DativeCaseDeclension(rows);
@@ -842,6 +947,25 @@ namespace TatarDeclension
         {
             Input.Focus();
             Input.CaretIndex = Input.Text.Length;
+        }
+
+        private void Clear_Click(object sender, RoutedEventArgs e)
+        {
+            Input.Text = "";
+        }
+
+        private void ControlKeys(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                Declense_Click(sender, e);
+            }
+
+            if (e.Key == Key.Escape)
+            {
+                Clear_Click(sender, e);
+                Input.Focus();
+            }
         }
     }
 

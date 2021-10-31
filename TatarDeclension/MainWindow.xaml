@@ -6,24 +6,34 @@
         xmlns:local="clr-namespace:TatarDeclension"
         xmlns:collections="clr-namespace:System.Collections;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="Склонение татарских слов" Height="715.2" Width="480" SizeToContent="WidthAndHeight" ShowInTaskbar="False" Topmost="True" ResizeMode="NoResize" WindowStartupLocation="Manual">
+        KeyDown="ControlKeys"
+        Title="Склонение татарских слов" Height="730" Width="500" SizeToContent="WidthAndHeight" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" Icon="фото на визу.ico">
     <Grid>
-        <CheckBox x:Name="IsInVowelHarmony" Content="Слово подчиняется закону сингармонизма" HorizontalAlignment="Left" Margin="105,65,0,0" VerticalAlignment="Top" IsChecked="True" Height="16" Width="258"/>
-        <TextBox x:Name="Input" HorizontalAlignment="Left" Height="23" Margin="105,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="258"/>
-        <Button x:Name="Declense" Content="Просклонять" HorizontalAlignment="Left" Margin="195,86,0,0" VerticalAlignment="Top" Width="75" Click="Declense_Click"/>
+        <CheckBox x:Name="IsInVowelHarmony" Content="Слово подчиняется закону сингармонизма" Margin="0,75,0,600" IsChecked="True" Height="25" Width="258" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBox x:Name="Input" HorizontalAlignment="Center" Height="25" Margin="0,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="258"/>
+        <Button x:Name="Declense" Content="Просклонять" HorizontalAlignment="Center" Margin="0,105,0,0" VerticalAlignment="Top" Width="75" Click="Declense_Click" Height="25"/>
 
-        <DataGrid Name="Table" AutoGenerateColumns="False" Margin="10,110,10,10" Width="450" IsReadOnly="True">
+        <DataGrid Name="Table" AutoGenerateColumns="False" Margin="22,145,21.6,10" Width="450" IsReadOnly="True">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Килеш" Binding="{Binding Case}" Width="150"/>
-                <DataGridTextColumn Header="Берлек сан" Binding="{Binding Singular}" Width="150"/>
-                <DataGridTextColumn Header="Күплек сан" Binding="{Binding Plural}" Width="150"/>
+                <DataGridTextColumn Header="Килеш" Binding="{Binding Case}" Width="130">
+                    <DataGridColumn.CellStyle>
+                        <Style TargetType="{x:Type DataGridCell}">
+                            <Style.Setters>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                            </Style.Setters>
+                        </Style>
+                    </DataGridColumn.CellStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Берлек сан" Binding="{Binding Singular}" Width="165"/>
+                <DataGridTextColumn Header="Күплек сан" Binding="{Binding Plural}" Width="155"/>
             </DataGrid.Columns>
         </DataGrid>
-        <Button x:Name="FirstSpecificLetter" Content="ө" HorizontalAlignment="Left" Margin="10,42,0,0" VerticalAlignment="Top" Width="70" Click="FirstSpecificLetter_Click"/>
-        <Button x:Name="SecondSpecificLetter" Content="ң" HorizontalAlignment="Left" Margin="85,42,0,0" VerticalAlignment="Top" Width="70" Click="SecondSpecificLetter_Click"/>
-        <Button x:Name="ThirdSpecificLetter" Content="ү" HorizontalAlignment="Left" Margin="160,42,0,0" VerticalAlignment="Top" Width="70" Click="ThirdSpecificLetter_Click"/>
-        <Button x:Name="FourthSpecificLetter" Content="ә" HorizontalAlignment="Right" Margin="0,42,160,0" VerticalAlignment="Top" Width="70" Click="FourthSpecificLetter_Click"/>
-        <Button x:Name="FifthSpecificLetter" Content="җ" HorizontalAlignment="Right" Margin="0,42,85,0" VerticalAlignment="Top" Width="70" Click="FifthSpecificLetter_Click"/>
-        <Button x:Name="SixthSpecificLetter" Content="һ" HorizontalAlignment="Right" Margin="0,42,10,0" VerticalAlignment="Top" Width="70" Click="SixthSpecificLetter_Click"/>
+        <Button x:Name="FirstSpecificLetter" Content="ө" HorizontalAlignment="Left" Margin="10,42,0,0" VerticalAlignment="Top" Width="75" Click="FirstSpecificLetter_Click" Height="25"/>
+        <Button x:Name="SecondSpecificLetter" Content="ң" HorizontalAlignment="Left" Margin="90,42,0,0" VerticalAlignment="Top" Width="75" Click="SecondSpecificLetter_Click" Height="25"/>
+        <Button x:Name="ThirdSpecificLetter" Content="ү" HorizontalAlignment="Left" Margin="170,42,0,0" VerticalAlignment="Top" Width="75" Click="ThirdSpecificLetter_Click" Height="25"/>
+        <Button x:Name="FourthSpecificLetter" Content="ә" HorizontalAlignment="Right" Margin="0,42,170,0" VerticalAlignment="Top" Width="75" Click="FourthSpecificLetter_Click" Height="25"/>
+        <Button x:Name="FifthSpecificLetter" Content="җ" HorizontalAlignment="Right" Margin="0,42,90,0" VerticalAlignment="Top" Width="75" Click="FifthSpecificLetter_Click" Height="25"/>
+        <Button x:Name="SixthSpecificLetter" Content="һ" HorizontalAlignment="Right" Margin="0,42,10,0" VerticalAlignment="Top" Width="75" Click="SixthSpecificLetter_Click" Height="25"/>
+        <Label Content="Версия 0,02" Margin="422,0,-0.4,676" Height="24" VerticalAlignment="Top"/>
     </Grid>
 </Window>
