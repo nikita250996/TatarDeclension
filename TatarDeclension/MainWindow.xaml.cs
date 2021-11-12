@@ -50,6 +50,7 @@ namespace TatarDeclension
             {'б', 'в', 'г', 'д', 'ж', 'җ', 'з', 'л', 'м', 'н', 'ң', 'р', 'й'};
 
         private readonly char[] _allVowels = {'ә', 'ө', 'и', 'ү', 'э', 'а', 'о', 'у', 'ы', 'е', 'ю', 'я'};
+        private bool _lastLetterChanged;
 
         public MainWindow()
         {
@@ -218,6 +219,7 @@ namespace TatarDeclension
                 case FirstException:
                 {
                     //замена п на б
+                    _lastLetterChanged = true;
                     return PossessException('б', possessedForms);
                 }
                 case SecondException:
@@ -319,7 +321,12 @@ namespace TatarDeclension
             possessedForms[2] = _word + "ың";
             possessedForms[3] = _word + "ыгыз";
             possessedForms[4] = _word + 'ы';
-            possessedForms[5] = _word + "лары";
+            _lastLetter = _word[_word.Length - 1];
+            if (_lastLetterChanged)
+            {
+                _word = Input.Text;
+            }
+            possessedForms[5] = _lastException.Contains(_lastLetter) ? _word + "нары" : _word + "лары";
         }
 
         private void PossessSoft(IList<string> possessedForms)
@@ -331,13 +338,17 @@ namespace TatarDeclension
             if (_people.Contains(_word))
             {
                 possessedForms[4] = _word + "се";
-                possessedForms[5] = _word + "ләре";
             }
             else
             {
                 possessedForms[4] = _word + 'е';
-                possessedForms[5] = _word + "ләре";
             }
+            _lastLetter = _word[_word.Length - 1];
+            if (_lastLetterChanged)
+            {
+                _word = Input.Text;
+            }
+            possessedForms[5] = _lastException.Contains(_lastLetter) ? _word + "нәре" : _word + "ләре";
         }
 
         public string Reverse(string s)
@@ -350,6 +361,7 @@ namespace TatarDeclension
         private string BasePlural()
         {
             _lastLetter = _word[_word.Length - 1];
+            
             if (_lastException.Contains(_lastLetter))
             {
                 return _isSoft ? _word + "нәр" : _word + "нар";
@@ -361,13 +373,13 @@ namespace TatarDeclension
         private void VowelHarmonyDeclension()
         {
             List<Row> rows = new List<Row>(28);
-            rows.Add(new Row { Singular = "Первое лицо"});
+            rows.Add(new Row {Singular = "Первое лицо", IsBold = true});
             BaseFill(rows, _possessedForms[0], _possessedForms[1]);
-            rows.Add(new Row { Singular = "Второе лицо"});
+            rows.Add(new Row {Singular = "Второе лицо", IsBold = true});
             BaseFill(rows, _possessedForms[2], _possessedForms[3]);
-            rows.Add(new Row { Singular = "Третье лицо"});
+            rows.Add(new Row {Singular = "Третье лицо", IsBold = true});
             BaseFill(rows, _possessedForms[4], _possessedForms[5]);
-            rows.Add(new Row { Singular = "Основа + аффикс падежа"});
+            rows.Add(new Row {Singular = "Основа + аффикс падежа", IsBold = true});
             _word = Input.Text;
             BaseFill(rows, _word, BasePlural());
             PossessiveCaseDeclension(rows);
@@ -976,5 +988,6 @@ namespace TatarDeclension
         public string Singular { get; set; }
 
         public string Plural { get; set; }
+        public bool IsBold { get; set; }
     }
 }

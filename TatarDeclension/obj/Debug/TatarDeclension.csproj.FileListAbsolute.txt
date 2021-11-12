@@ -12,3 +12,4 @@ A:\Visual Studio Projects\TatarDeclension\TatarDeclension\obj\Debug\TatarDeclens
 A:\Visual Studio Projects\TatarDeclension\TatarDeclension\obj\Debug\TatarDeclension.csproj.CoreCompileInputs.cache
 A:\Visual Studio Projects\TatarDeclension\TatarDeclension\obj\Debug\TatarDeclension.exe
 A:\Visual Studio Projects\TatarDeclension\TatarDeclension\obj\Debug\TatarDeclension.pdb
+A:\Visual Studio Projects\TatarDeclension\TatarDeclension\obj\Debug\TatarDeclension.csproj.AssemblyReference.cache
